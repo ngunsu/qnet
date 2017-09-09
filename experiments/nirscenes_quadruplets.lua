@@ -1,0 +1,10 @@
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 0.1 -max_iter 1000 -batchsize 128 -debug 1 -save results/01
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 0.3 -max_iter 1000 -batchsize 128 -debug 1 -save results/02
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 0.5 -max_iter 1000 -batchsize 128 -debug 1 -save results/03
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 0.8 -max_iter 1000 -batchsize 128 -debug 1 -save results/04
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 1.0 -max_iter 1000 -batchsize 128 -debug 1 -save results/05
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 1.1 -max_iter 1000 -batchsize 128 -debug 1 -save results/06
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 1.3 -max_iter 1000 -batchsize 128 -debug 1 -save results/07
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 1.5 -max_iter 1000 -batchsize 128 -debug 1 -save results/08
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 1.8 -max_iter 1000 -batchsize 128 -debug 1 -save results/09
+th nirscenes_quadruplets_train.lua -dataset_path $1 -net ../nets/train_only/quadruplets_4n_2p_256_raw.t7  -seq country -learning_rate 2.0 -max_iter 1000 -batchsize 128 -debug 1 -save results/10
