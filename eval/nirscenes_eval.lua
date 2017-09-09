@@ -41,7 +41,6 @@ cmd:text('Options:')
 
 -- Global
 cmd:option('-seed', 1, 'Fixed input seed for repeatable experiments')
-cmd:option('-store_bests_worsts', 0, 'Store best and worst cases')
 
 -- CPU/GPU related options
 cmd:option('-batchsize', 256, 'Batchsize')
@@ -72,14 +71,6 @@ torch.manualSeed(opt.seed)
 ---------------------------------------------------------------------------------------------------
 log.info('[INFO] Loading network ...')
 net = torch.load(opt.net)
-if moses.contains({'iccv2015', 'qnet'}, opt.net_type) then
-    mean = net.mean
-    std = net.std
-    net = net.desc
-elseif opt.net_type == 'cvpr2015siaml2' then
-    net = net:get(1):get(1)
-    normalize = nn.Normalize(2):float()
-end
 
 cudnn.convert(net, cudnn)
 net:cuda()
@@ -97,9 +88,9 @@ for __,s in pairs(sequences) do
 
     -- Load sequence
     local seq_path = paths.concat(opt.dataset_path, s .. '.t7')
-    local seq = torch.load(seq_path)
+    local seq = torch.load(seq_path, 'ascii')
 
-    local new_seq_data = seq:float()
+    local new_seq_data = torch.Tensor(seq.data:size(1),2,32,32):float()
     for i=1,seq.data:size()[1] do
         local scaled_im_1 = image.scale(seq.data[{ {i},1,{},{} }]:clone(),32,32):float():div(255)
         local scaled_im_2 = image.scale(seq.data[{ {i},2,{},{} }]:clone(),32,32):float():div(255)
@@ -133,43 +124,9 @@ for __,s in pairs(sequences) do
         collectgarbage()
     end
 
-    if opt.store_bests_worsts > 0 then
-        local sorted_scores, sorted_index = torch.sort(scores*-1, 1, false)
-        local bests = 1
-        local worsts = 1
-        local bests_t = torch.Tensor(opt.store_bests_worsts, 2, 32, 32):float()
-        local worsts_t = torch.Tensor(opt.store_bests_worsts, 2, 32, 32):float()
-            
-        for b=1, sorted_index:size(1) do
-            if seq.labels[sorted_index[b]] > 0  and bests < opt.store_bests_worsts then
-                -- Add pair positive pair
-                bests_t[bests][1] = seq.data[sorted_index[b]][1]:clone()
-                bests_t[bests][2] = seq.data[sorted_index[b]][2]:clone()
-                bests = bests + 1
-            end
-            if seq.labels[sorted_index[b]] < 1 and worsts < opt.store_bests_worsts then
-                -- Add negative pair
-                worsts_t[worsts][1] = seq.data[sorted_index[b]][1]:clone()
-                worsts_t[worsts][2] = seq.data[sorted_index[b]][2]:clone()
-                worsts = worsts + 1
-            end
-            -- Stop Iterating
-            if worsts >= opt.store_bests_worsts and bests >= opt.store_bests_worsts then
-                break
-            end
-        end
-        local res = {}
-        res.best = bests_t
-        res.worst = worsts_t
-        torch.save(s .. '_bw_.t7', res)
-    end
-
-    err =  metrics.error_rate_at_95recall(seq.labels, scores, true)
-    full_err_95[s] = err
-    log.info(s .. ' error: ' .. err )
-    
     fpr95err = fpr95(seq.labels, scores*-1, false)
-    log.info(s .. 'CVPR Error:' .. fpr95err )
+    full_err_95[s] = fpr95err
+    log.info(s .. 'Error:' .. fpr95err )
     x, y = roc(seq.labels, scores*-1, false)
     collectgarbage()
     collectgarbage()
