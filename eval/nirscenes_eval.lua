@@ -51,7 +51,6 @@ cmd:option('-dataset_path', '../datasets/nirscenes/', 't7 sequences filepath')
 
 -- Network
 cmd:option('-net', '../trained_networks/qnet.t7', 'Network model')
-cmd:option('-net_type', 'qnet', 'Network model type')
 
 cmd:text()
 
@@ -100,38 +99,14 @@ for __,s in pairs(sequences) do
     local seq_path = paths.concat(opt.dataset_path, s .. '.t7')
     local seq = torch.load(seq_path)
 
-    -- Preprocess data
-    if moses.contains({'cvpr2015','cvpr2015siaml2'}, opt.net_type) then
-        seq.data = seq.data:float():div(255)
-        for i=1,seq.data:size()[1] do
-            local mean_1 = seq.data[{ {i},1,{},{} }]:mean()
-            local mean_2 = seq.data[{ {i},2,{},{} }]:mean()
-            seq.data[{ {i},1,{},{} }] = seq.data[{ {i},1,{},{} }]-mean_1
-            seq.data[{ {i},2,{},{} }] = seq.data[{ {i},2,{},{} }]-mean_2
-        end
-    elseif opt.net_type == 'iccv2015' then
-        seq.data = seq.data:float()
-        for i=1,seq.data:size()[1] do
-            seq.data[{ {i},1,{},{} }] = seq.data[{ {i},1,{},{} }]:add(-mean):cdiv(std)
-            seq.data[{ {i},2,{},{} }] = seq.data[{ {i},2,{},{} }]:add(-mean):cdiv(std)
-        end
-    elseif opt.net_type == 'qnet' then
-        local new_seq_data = torch.Tensor(seq.data:size(1),2,32,32):float()
-        for i=1,seq.data:size()[1] do
-            new_seq_data[{ {i},1,{},{} }] = image.scale(seq.data[{ {i},1,{},{} }]:clone(),32,32):clone():float():div(255):add(-mean):div(std)
-            new_seq_data[{ {i},2,{},{} }] = image.scale(seq.data[{ {i},2,{},{} }]:clone(),32,32):clone():float():div(255):add(-mean):div(std)
-        end
-        seq.data = new_seq_data:clone()
-    elseif opt.net_type == 'pnnet_mean' then
-        local new_seq_data = torch.Tensor(seq.data:size(1),2,32,32):float()
-        for i=1,seq.data:size()[1] do
-            local scaled_im_1 = image.scale(seq.data[{ {i},1,{},{} }]:clone(),32,32):float():div(255)
-            local scaled_im_2 = image.scale(seq.data[{ {i},2,{},{} }]:clone(),32,32):float():div(255)
-            new_seq_data[{ {i},1,{},{} }] = scaled_im_1:add(-scaled_im_1:mean())
-            new_seq_data[{ {i},2,{},{} }] = scaled_im_2:add(-scaled_im_2:mean())
-        end
-        seq.data = new_seq_data:clone()
+    local new_seq_data = seq:float()
+    for i=1,seq.data:size()[1] do
+        local scaled_im_1 = image.scale(seq.data[{ {i},1,{},{} }]:clone(),32,32):float():div(255)
+        local scaled_im_2 = image.scale(seq.data[{ {i},2,{},{} }]:clone(),32,32):float():div(255)
+        new_seq_data[{ {i},1,{},{} }] = scaled_im_1:add(-scaled_im_1:mean())
+        new_seq_data[{ {i},2,{},{} }] = scaled_im_2:add(-scaled_im_2:mean())
     end
+    seq.data = new_seq_data:clone()
     collectgarbage()
     collectgarbage()
 
@@ -149,19 +124,11 @@ for __,s in pairs(sequences) do
         -- Predict
         score_idx_low = (i-1) * opt.batchsize + 1
         score_idx_high = score_idx_low + input:size(1) -1
-        if opt.net_type == 'cvpr2015' then
-            scores[{ {score_idx_low,score_idx_high} }] = net:forward(input):clone():float()
-        elseif moses.contains({'iccv2015', 'qnet', 'pnnet_mean'}, opt.net_type) then
-            local des_1 = net:forward(input[{ {},{1},{},{} }]):clone():float()
-            local des_2 = net:forward(input[{ {},{2},{},{} }]):clone():float()
-            scores[{ {score_idx_low, score_idx_high} }] = -1*torch.norm(des_1-des_2, 2, 2)
-        elseif opt.net_type == 'cvpr2015siaml2' then
-            local des_1 = net:forward(input[{ {},{1},{},{} }]):clone():float()
-            local des_2 = net:forward(input[{ {},{2},{},{} }]):clone():float()
-            des_1 = normalize:forward(des_1):clone()
-            des_2 = normalize:forward(des_2):clone()
-            scores[{ {score_idx_low, score_idx_high} }] = -1*torch.norm(des_1-des_2, 2, 2)
-        end
+        
+        local des_1 = net:forward(input[{ {},{1},{},{} }]):clone():float()
+        local des_2 = net:forward(input[{ {},{2},{},{} }]):clone():float()
+        scores[{ {score_idx_low, score_idx_high} }] = -1*torch.norm(des_1-des_2, 2, 2)
+        
         collectgarbage()
         collectgarbage()
     end
