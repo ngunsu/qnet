@@ -80,10 +80,10 @@ Evaluation code can be found in the *eval* folder. To eval one sequence:
     th nirscenes_eval.lua -dataset_path [path] -net [trained network] -net_type qnet
     ```
 
-For example, to eval the field sequence using the Q-Net article trained network. It is assumed that the dataset is stored in ../datasets  
+For example, to eval the field sequence using the Q-Net article trained network. 
 
     ```bash
-    th nirscenes_eval.lua -dataset_path ../datasets -net ../trained_networks/qnet.t7 -net_type qnet
+    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes -net ../trained_networks/qnet.t7 -net_type qnet
     ```
 
 For more options, run 
@@ -98,7 +98,7 @@ For more options, run
 
     ```bash
     cd eval
-    th icip2015_eval.lua -dataset_path ../nirscenes/icip2015/ -net [trained network] -net_type qnet
+    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net [trained network] -net_type qnet
     ```
 
 For example. To eval Q-Net

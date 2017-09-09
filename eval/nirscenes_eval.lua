@@ -23,7 +23,6 @@ cudnn = require 'cudnn'
 cunn = require 'cunn'
 cutorch = require 'cutorch'
 require '../utils/fpr95.lua'
-local matio = require 'matio'
 
 ---------------------------------------------------------------------------------------------------
 -- Nirscenes sequences
@@ -205,7 +204,6 @@ for __,s in pairs(sequences) do
     fpr95err = fpr95(seq.labels, scores*-1, false)
     log.info(s .. 'CVPR Error:' .. fpr95err )
     x, y = roc(seq.labels, scores*-1, false)
-    matio.save(s .. '.mat', {x=x, y=y, fpr95err=fpr95err})
     collectgarbage()
     collectgarbage()
 end
