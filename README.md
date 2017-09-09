@@ -33,24 +33,9 @@ Two options: Download the generated t7 dataset from
 
 - [Google Drive](https://drive.google.com/drive/folders/0B_tuqO61RC9hUVo1RHRHUGdGQU0?usp=sharing)
 
-Follow the following steps to generate the dataset
+or follow generate the dataset as in
 
-1. Download the original nirscenes dataset [link](http://ivrl.epfl.ch/supplementary_material/cvpr11/)
-2. Decompress the dataset on /datasets/nirscenes
-3. Convert the images in each folder to ppm  (Torch doesn't support tiff). Use your favorite software
-4. Install csvigo
-
-    ```bash
-    luarocks install csvigo
-    ```
-
-5. Use our script to generate the dataset
-
-    ```bash
-    cd utils
-    th nirscenes_to_t7.lua
-    ```
-
+- [lcsis](https://github.com/ngunsu/lcsis)
 
 #### VIS-LWIR ICIP2015
 
@@ -77,13 +62,13 @@ Evaluation code can be found in the *eval* folder. To eval one sequence:
 
     ```bash
     cd eval
-    th nirscenes_eval.lua -dataset_path [path] -net [trained network] -net_type qnet
+    th nirscenes_eval.lua -dataset_path [path] -net [trained network]
     ```
 
 For example, to eval the field sequence using the Q-Net article trained network. 
 
     ```bash
-    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes -net ../trained_networks/qnet.t7 -net_type qnet
+    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes -net ../trained_networks/qnet.t7
     ```
 
 For more options, run 
@@ -98,14 +83,14 @@ For more options, run
 
     ```bash
     cd eval
-    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net [trained network] -net_type qnet
+    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net [trained network] 
     ```
 
 For example. To eval Q-Net
 
     ```bash
     cd eval
-    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net ../trained_networks/qnet.t7 -net_type qnet
+    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net ../trained_networks/qnet.t7 
     ```
 
 ### Training
