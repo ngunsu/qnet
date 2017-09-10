@@ -33,9 +33,7 @@ Two options: Download the generated t7 dataset from
 
 - [Google Drive](https://drive.google.com/drive/folders/0B_tuqO61RC9hUVo1RHRHUGdGQU0?usp=sharing)
 
-or follow generate the dataset as in
-
-- [lcsis](https://github.com/ngunsu/lcsis)
+** Training and evaluation t7 files are different **
 
 #### VIS-LWIR ICIP2015
 
@@ -68,7 +66,7 @@ Evaluation code can be found in the *eval* folder. To eval one sequence:
 For example, to eval the field sequence using the Q-Net article trained network. 
 
     ```bash
-    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes -net ../trained_networks/qnet.t7
+    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes/test -net ../trained_networks/qnet.t7
     ```
 
 For more options, run 
@@ -99,28 +97,25 @@ For example. To eval Q-Net
 
     ```bash
     luarocks install penlight
+    luarocks install torchx
+    luarocks install json
     ```
 
 2. Train a network
 
     ```bash
     cd train
-    th nirscenes_doall.lua -training_sequences [country|field|...] -net [2ch|siam|psiam]
+    th nirscenes_quadruplets_train.lua
     ```
 
-For example, train a 2ch network using the country sequence
-
- ```bash
- cd train
- th nirscenes_doall.lua -training_sequences country -net 2ch
- ```
-
-Results will be stored in the results folder.For more options, run
+Run
 
 ```bash
-th nirscenes_doall.lua -h
+th nirscenes_quadruplets_train.lua -h
 ```
 
-*Note* The training code is different from the one used in the article. This new version is much faster. 
+to see the options
+
+*Note* The training code is different from the one used in the article. This new version is smaller. Additionally, the dataset was generated from zero. So, small differences in FPR95 may happen.
 
 

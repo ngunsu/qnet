@@ -16,11 +16,10 @@ require 'xlua'
 require 'paths'
 require 'torchx'
 require '../utils/metrics.lua'
-require '../utils/DistanceRatioCriterion.lua'
+require '../utils/DistanceRatioCriterion2.lua'
 require '../utils/utils.lua'
 local pl_path = require 'pl.path'
 local log = require '../utils/log.lua'
-display = require 'display'
 
 
 --------------------------------------------------------------------------------
@@ -38,12 +37,12 @@ if not opt then
     cmd:option('-save', 'results', 'save folder')
 
     -- Dataset
-    cmd:option('-dataset_path', '/opt/datasets/nirscenes/', 'Dataset path')
+    cmd:option('-dataset_path', '../datasets/nirscenes/train', 'Dataset path')
     cmd:option('-seq', 'country', 'Dataset train sequence')
     cmd:option('-val_p',0.05 , 'Percentage of training data used  as validation')
 
     -- Models
-    cmd:option('-net', '../external/2ch_yosemite_nn.t7', 'Network model')
+    cmd:option('-net', '../nets/qnet.t7', 'Network model')
 
     -- SGD
     cmd:option('-learning_rate', 0.1, 'SGD learning rate')
@@ -66,11 +65,6 @@ if not opt then
     opt = cmd:parse(arg or {})
  end
 
-if opt.debug == 1 then
-    require('mobdebug').start()
-end
-
-display.configure({hostname=opt.image_server, port=8000})
 --------------------------------------------------------------------------------
 -- Print options
 -------------------------------------------------------------------------------
@@ -171,7 +165,7 @@ net = torch.load(opt.net)
 cudnn.convert(net, cudnn)
 net:cuda()
 -- Set criterion
-crit=nn.DistanceRatioCriterion()
+crit=nn.DistanceRatioCriterion2()
 crit = crit:cuda()
 print(net)
 
@@ -240,12 +234,6 @@ function train()
     net_layer = net:get(1):get(1):clone():float()
     cudnn.convert(net_layer, nn)
     net_layer = net_layer:clearState()
-    -- Display weights
-    display_weights = torch.Tensor(net_layer:get(1).weight:size(1), 64, 64)
-    for ii =1, net_layer:get(1).weight:size(1) do
-        display_weights[ii] = image.scale(net_layer:get(1).weight[ii]:clone(), 64, 64)
-    end
-    w_win = display.image(display_weights, {win=w_win,title='weights_epoch' .. epoch})
 end
 
 -------------------------------------------------------------------------------
@@ -306,19 +294,7 @@ patience = 0
 
 while epoch < opt.max_iter do
     train()
-
-    -- Loss and display
-    table.insert(loss_table,{epoch, Gerr})
-    loss_win = display.plot(loss_table,{win=loss_win, labels={'epoch','loss'}, title={'Loss'}})
-    loss_logger:add{['loss']=Gerr}
-    log.info('Epoch ' .. epoch .. ' loss:' .. Gerr)
-
     validation()
-    table.insert(val_table,{epoch, val_error})
-    val_win = display.plot(val_table,{win=val_win, labels={'epoch','err95'}, title={'Error95 on Validation'}})
-    accuracy_logger:add{['val']=val_error}
-    print('')
-    print('')
 
     --Early stop
     if val_error < best_val then

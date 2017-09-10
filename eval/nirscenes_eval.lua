@@ -46,7 +46,7 @@ cmd:option('-seed', 1, 'Fixed input seed for repeatable experiments')
 cmd:option('-batchsize', 256, 'Batchsize')
 
 -- Sequence path
-cmd:option('-dataset_path', '../datasets/nirscenes/', 't7 sequences filepath')
+cmd:option('-dataset_path', '../datasets/nirscenes/test', 't7 sequences filepath')
 
 -- Network
 cmd:option('-net', '../trained_networks/qnet.t7', 'Network model')
