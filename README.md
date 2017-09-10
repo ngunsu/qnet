@@ -33,7 +33,7 @@ Two options: Download the generated t7 dataset from
 
 - [Google Drive](https://drive.google.com/drive/folders/0B_tuqO61RC9hUVo1RHRHUGdGQU0?usp=sharing)
 
-** Training and evaluation t7 files are different **
+**Training and evaluation t7 files are different**
 
 #### VIS-LWIR ICIP2015
 
@@ -51,62 +51,63 @@ Evaluation code can be found in the *eval* folder. To eval one sequence:
 1. You have to generate or download  the nirscenes patch dataset
 2. Install xlua
 
-    ```bash
-    luarocks install xlua
-    luarocks install moses
-    ```
+```bash
+luarocks install xlua
+luarocks install moses
+```
 
 3. Run
 
-    ```bash
-    cd eval
-    th nirscenes_eval.lua -dataset_path [path] -net [trained network]
-    ```
+```bash
+cd eval
+th nirscenes_eval.lua -dataset_path [path] -net [trained network]
+```
 
 For example, to eval the field sequence using the Q-Net article trained network. 
 
-    ```bash
-    th nirscenes_eval.lua -dataset_path ../datasets/nirscenes/test -net ../trained_networks/qnet.t7
-    ```
+```bash
+th nirscenes_eval.lua -dataset_path ../datasets/nirscenes/test -net ../trained_networks/qnet.t7
+```
 
 For more options, run 
-    ```bash
-    th nirscenes_eval -h
-    ```
+
+```bash
+th nirscenes_eval -h
+```
 
 #### VIS-LWIR eval (ICIP2015) (just cuda support)
 
 1. You have to download the dataset first
 2. Run
 
-    ```bash
-    cd eval
-    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net [trained network] 
-    ```
+```bash
+cd eval
+th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net [trained network] 
+```
 
 For example. To eval Q-Net
 
-    ```bash
-    cd eval
-    th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net ../trained_networks/qnet.t7 
-    ```
+```bash
+cd eval
+th icip2015_eval.lua -dataset_path ../datasets/icip2015/ -net ../trained_networks/qnet.t7 
+```
 
 ### Training
 
-1. Install penlight
+1. Install penlight, torchx and json
 
-    ```bash
-    luarocks install penlight
-    luarocks install torchx
-    luarocks install json
-    ```
+```bash
+luarocks install penlight
+luarocks install torchx
+luarocks install json
+```
 
 2. Train a network
 
-    ```bash
-    cd train
-    th nirscenes_quadruplets_train.lua
-    ```
+ ```bash
+ cd train
+ th nirscenes_quadruplets_train.lua
+ ```
 
 Run
 
