@@ -31,7 +31,7 @@ First install the torch framework and cudnn
 
 Two options: Download the generated t7 dataset from
 
-- [Google Drive](https://drive.google.com/drive/folders/0B_tuqO61RC9hUVo1RHRHUGdGQU0?usp=sharing)
+- [Google Drive](https://drive.google.com/open?id=1ilDBegjTW_DH02FvuOyWo47ecjjNwP0T)
 
 **Training and evaluation t7 files are different**
 
@@ -39,7 +39,7 @@ Two options: Download the generated t7 dataset from
 
 1. Download the dataset from
 
-- [Google Drive](https://drive.google.com/drive/folders/0B_tuqO61RC9hUDI1bmNqU1dKWGc?usp=sharing)
+- [Google Drive](https://drive.google.com/open?id=1lQ3pFy483J00PxXMohEwoc05bqQHltAh)
 
 
 ### Eval
